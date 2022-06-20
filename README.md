@@ -2,11 +2,11 @@
 
 Video: https://youtu.be/xB9tfi_Bzs8
 
-Drop-in naviation unit for my robot using an RPLIDAR A1 and and Intel Realsense T265 Tracking Camera.
+Drop-in navigation unit for my robot using an RPLIDAR A1 and and Intel Realsense T265 Tracking Camera.
 
 This is not a tutorial, you'll require some prior ROS knowledge.
 
-Code in the Arduino directory is to control a differental drive robot with two wheels using 4 PWM lines. I used IBT4 drivers. There are no wheel encoders on my robot, so the scaling from the cmd_vel topic was done by trial and error. Encoders would of course make the robot velocity more reliable, however in this example encoders are not required since Odometry is provided by the T265 tracking camera.
+Code in the Arduino directory is to control a differential drive robot with two wheels using 4 PWM lines. I used IBT4 drivers. There are no wheel encoders on my robot, so the scaling from the cmd_vel topic was done by trial and error. Encoders would of course make the robot velocity more reliable, however in this example encoders are not required since Odometry is provided by the T265 tracking camera.
 
 How to make it work:
 
@@ -44,14 +44,14 @@ I repurposed the Really Useful Robot navigation code for my robot.
 
 https://github.com/XRobots/ReallyUsefulRobot/tree/main/ROS/rur_navigation
 
-Since the robot is not using wheel Odometry, one thing will need to be changed in move_base.launch to match the Odom topic fromt he camera. On line 4:
+Since the robot is not using wheel Odometry, one thing will need to be changed in move_base.launch to match the Odom topic from he camera. On line 4:
 
 change: default="odom"
 to: default="/camera/odom/sample"
 
 https://github.com/XRobots/ReallyUsefulRobot/blob/main/ROS/rur_navigation/launch/move_base.launch
 
-Lanuch the following nodes. The last one launches the ROSserial node to communicate with the Arduino controlling the robot hardware.
+Launch the following nodes. The last one launches the ROSserial node to communicate with the Arduino controlling the robot hardware.
 
 <code>roslaunch rplidar_ros rplidar.launch</code>
 
@@ -59,7 +59,7 @@ Lanuch the following nodes. The last one launches the ROSserial node to communic
 
 <code>rosrun rosserial_python serial_node.py _port:=/dev/ttyUSB0</code>
 
-I pubished three transforms to stick everything together (yes they should be in a URDF file):
+I published three transforms to stick everything together (yes they should be in a URDF file):
 
 <code>rosrun tf static_transform_publisher 0.0 0.0 0.2 3.141592 0.0 0.0 camera_link laser 100</code>
 
@@ -71,11 +71,12 @@ Run GMapping:
 
 <code>rosrun gmapping slam_gmapping scan:=scan</code>
 
-Run RVIZ and add: TF, Laser, Map (and connect to the relevent topics). Driving the robot manually should produce the map. Save the map with:
+Run RVIZ and add: TF, Laser, Map (and connect to the relevant topics). Driving the robot manually should produce the map. Save the map with:
 
 <code>rosrun map_server map_saver -f ~/map</code>
 
 Launch the modified RUR robot navigation node wch now looks at the Odom topic from the camera and the map:
 
 <code>roslaunch rur_navigation rur_navigation.launch map_file:=$HOME/map.yaml</code>
+
 
